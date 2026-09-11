@@ -37,6 +37,13 @@ dependencies = [
   "statsmodels",
 ]
 
+[project.urls]
+Homepage = "https://github.com/DiogoRibeiro7/anomalybench"
+Documentation = "https://diogoribeiro7.github.io/anomalybench/"
+Repository = "https://github.com/DiogoRibeiro7/anomalybench"
+Issues = "https://github.com/DiogoRibeiro7/anomalybench/issues"
+Changelog = "https://github.com/DiogoRibeiro7/anomalybench/blob/main/CHANGELOG.md"
+
 [project.optional-dependencies]
 deep = ["torch", "tensorflow"]
 streaming = ["river"]
