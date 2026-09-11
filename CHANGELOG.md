@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format follows Keep a Changelog, and this project uses semantic versioning.
 
+## [0.6.2](https://github.com/DiogoRibeiro7/anomalybench/compare/v0.6.1...v0.6.2) (2026-09-11)
+
+
+### Fixed
+
+* **packaging:** publish the project URLs to PyPI ([7c08191](https://github.com/DiogoRibeiro7/anomalybench/commit/7c081919d408a7e14a669cc238d7a917db91305b))
+
 ## [0.6.1](https://github.com/DiogoRibeiro7/anomalybench/compare/v0.6.0...v0.6.1) (2026-09-04)
 
 
