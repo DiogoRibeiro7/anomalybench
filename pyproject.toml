@@ -24,7 +24,7 @@ classifiers = [
 ]
 dependencies = [
   "combo",
-  "DataExcept>=1.2.0,<2.0.0",
+  "DataExcept>=1.6.0,<2.0.0",
   "matplotlib",
   "networkx",
   "numpy",
