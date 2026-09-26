@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: DiogoRibeiro7/git-actions-collection/.github/actions/setup-poetry@v1
         with:
           python-version: "3.12"
-      - run: pip install poetry
+          install-deps: "false"
       - run: poetry install --no-interaction
       # Pinned: unpinned linters drift between a developer's machine and CI,
       # which surfaces as suppressions that are required locally and unused
