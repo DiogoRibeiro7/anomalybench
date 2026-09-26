@@ -37,6 +37,7 @@ def test_bundled_dataset_loaders_preserve_read_failures(
     monkeypatch.setattr(pd, "read_csv", denied)
     with pytest.raises(DataLoadingError) as error:
         loader()
+    assert error.value.source is not None
     assert error.value.source.endswith(("lymphography.dat", "ctg.csv"))
     assert isinstance(error.value.original, PermissionError)
 
