@@ -18,10 +18,10 @@ jobs:
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: DiogoRibeiro7/git-actions-collection/.github/actions/setup-poetry@v1
         with:
           python-version: "3.12"
-      - run: pip install poetry
+          install-deps: "false"
       # The package itself must be importable: mkdocstrings imports every
       # module it documents, so a broken import fails the docs build.
       - run: poetry install --no-interaction
