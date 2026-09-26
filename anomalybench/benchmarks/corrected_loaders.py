@@ -12,6 +12,8 @@ from pathlib import Path
 import pandas as pd
 from dataexcept import DataValidationError
 
+from anomalybench._io import load_csv as _read_csv
+
 _BENCHMARK_DIR = Path(__file__).resolve().parent
 
 
@@ -25,7 +27,7 @@ def load_cardio_corrected() -> tuple[pd.DataFrame, list[str], str, str]:
     label convention for this dataset family.
     """
 
-    df = pd.read_csv(_BENCHMARK_DIR / "ctg.csv")
+    df = _read_csv(_BENCHMARK_DIR / "ctg.csv")
     df = df.dropna(axis=1, how="all").dropna()
 
     # Keep only normal and pathological cases. Suspect cases are deliberately

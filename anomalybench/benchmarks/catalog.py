@@ -9,8 +9,9 @@ from inspect import getmembers, isfunction
 from pathlib import Path
 from typing import Any, TypedDict
 
-import yaml
+from dataexcept import SchemaMismatchError
 
+from anomalybench._io import load_yaml
 from anomalybench.benchmarks import load_datasets
 from anomalybench.benchmarks.corrected_loaders import load_cardio_corrected
 
@@ -68,8 +69,9 @@ def load_catalog() -> dict[str, dict[str, object]]:
 
     if not _CATALOG_PATH.exists():
         return {}
-    with _CATALOG_PATH.open("r", encoding="utf-8") as fh:
-        data = yaml.safe_load(fh) or {}
+    data = load_yaml(_CATALOG_PATH) or {}
+    if not isinstance(data, dict):
+        raise SchemaMismatchError("catalog mapping", type(data).__name__)
     raw_catalog = data.get("datasets", {})
     catalog: dict[str, dict[str, object]] = {}
     for name, details in raw_catalog.items():

@@ -5,8 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, NoReturn
 
-import yaml
 from dataexcept import ConfigurationError
+
+from anomalybench._io import load_yaml
 
 
 class ConfigValidationError(ConfigurationError):
@@ -222,8 +223,7 @@ def run_from_config(
         Path to a YAML file containing ``datasets`` and ``detectors`` selectors.
     """
     config_path = Path(path)
-    with config_path.open("r", encoding="utf-8") as fh:
-        config = yaml.safe_load(fh) or {}
+    config = load_yaml(config_path) or {}
     _validate_config(config)
     global _load_plugins, _run_benchmarks
     if _load_plugins is None or _run_benchmarks is None:

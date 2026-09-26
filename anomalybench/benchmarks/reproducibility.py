@@ -14,8 +14,9 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from dataexcept import DataValidationError, ResourceNotFoundError
+from dataexcept import DataLoadingError, DataValidationError, ResourceNotFoundError
 
+from anomalybench._io import write_text
 from anomalybench.benchmarks.catalog import list_available_datasets, load_catalog
 
 REPORT_SCHEMA_VERSION = "benchmark-report-v1"
@@ -61,8 +62,11 @@ def package_version() -> str:
 
     pyproject_path = _PROJECT_ROOT / "pyproject.toml"
     if pyproject_path.exists():
-        with pyproject_path.open("rb") as fh:
-            return str(tomllib.load(fh)["project"]["version"])
+        try:
+            with pyproject_path.open("rb") as fh:
+                return str(tomllib.load(fh)["project"]["version"])
+        except (OSError, tomllib.TOMLDecodeError) as exc:
+            raise DataLoadingError(str(pyproject_path), exc) from exc
     try:
         return metadata.version("anomalybench")
     except metadata.PackageNotFoundError:
@@ -204,12 +208,8 @@ def build_report(
 def write_json(path: str | Path, payload: dict[str, Any]) -> None:
     """Write a reproducibility payload as pretty JSON."""
 
-    output_path = Path(path)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(payload, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
+    # Serialize before touching the file so invalid payloads retain their error.
+    write_text(path, json.dumps(payload, indent=2, sort_keys=True) + "\n")
 
 
 def collect_dataset_integrity(names: list[str] | None) -> list[dict[str, Any]]:
@@ -230,14 +230,20 @@ def collect_dataset_integrity(names: list[str] | None) -> list[dict[str, Any]]:
                 raise ResourceNotFoundError(
                     "bundled benchmark file", str(relative_path)
                 )
-            size = file_path.stat().st_size
+            try:
+                size = file_path.stat().st_size
+            except OSError as exc:
+                raise DataLoadingError(str(file_path), exc) from exc
             if size <= 0:
                 raise DataValidationError(
                     str(relative_path),
                     0,
                     "bundled benchmark file is empty",
                 )
-            digest = hashlib.sha256(file_path.read_bytes()).hexdigest()
+            try:
+                digest = hashlib.sha256(file_path.read_bytes()).hexdigest()
+            except OSError as exc:
+                raise DataLoadingError(str(file_path), exc) from exc
             records.append(
                 {
                     "dataset_key": dataset_key,
