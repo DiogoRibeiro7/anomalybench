@@ -27,9 +27,11 @@ from dataexcept import (
     DataFormatError,
     DataValidationError,
     DependencyError,
+    FileWriteError,
     HyperparameterError,
 )
 
+from anomalybench._io import ensure_directory
 from anomalybench.analytics.detectors import (
     DETECTOR_REGISTRY,
     get_detector_class,
@@ -371,30 +373,33 @@ def _manifest_dataset_metadata(datasets_to_run) -> list[dict[str, object]]:
     return metadata_records
 
 
-def _append_leaderboard_rows(leaderboard_path, rows):
-    leaderboard_parent = os.path.dirname(os.fspath(leaderboard_path))
-    if leaderboard_parent:
-        os.makedirs(leaderboard_parent, exist_ok=True)
-    write_header = (
-        not os.path.exists(leaderboard_path) or os.path.getsize(leaderboard_path) == 0
-    )
+def _append_leaderboard_rows(
+    leaderboard_path: str | Path, rows: list[dict[str, Any]]
+) -> None:
+    """Append benchmark rows, reporting filesystem errors with the CSV path."""
 
-    with open(leaderboard_path, "a", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=LEADERBOARD_HEADER)
-        if write_header:
-            writer.writeheader()
+    destination = Path(leaderboard_path)
+    ensure_directory(destination.parent)
+    try:
+        write_header = not destination.exists() or destination.stat().st_size == 0
+        with destination.open("a", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(fh, fieldnames=LEADERBOARD_HEADER)
+            if write_header:
+                writer.writeheader()
 
-        for row in rows:
-            csv_row = dict(row)
-            csv_row["detector_params"] = json.dumps(
-                csv_row["detector_params"], sort_keys=True
-            )
-            csv_row["metrics"] = json.dumps(csv_row["metrics"], sort_keys=True)
-            csv_row["random_seed"] = (
-                "" if csv_row["random_seed"] is None else csv_row["random_seed"]
-            )
-            csv_row["auc"] = "" if csv_row["auc"] is None else csv_row["auc"]
-            writer.writerow(csv_row)
+            for row in rows:
+                csv_row = dict(row)
+                csv_row["detector_params"] = json.dumps(
+                    csv_row["detector_params"], sort_keys=True
+                )
+                csv_row["metrics"] = json.dumps(csv_row["metrics"], sort_keys=True)
+                csv_row["random_seed"] = (
+                    "" if csv_row["random_seed"] is None else csv_row["random_seed"]
+                )
+                csv_row["auc"] = "" if csv_row["auc"] is None else csv_row["auc"]
+                writer.writerow(csv_row)
+    except OSError as exc:
+        raise FileWriteError(str(destination), exc) from exc
 
 
 def run_benchmarks(
@@ -611,7 +616,7 @@ def run_benchmarks(
 
     output_path = Path(output_dir) if output_dir else None
     if output_path:
-        output_path.mkdir(parents=True, exist_ok=True)
+        ensure_directory(output_path)
         write_json(output_path / f"{effective_run_id}-manifest.json", manifest)
     if json_report:
         write_json(json_report, report)

@@ -19,6 +19,8 @@ import pandas as pd
 from sklearn import datasets
 from sklearn.preprocessing import LabelEncoder
 
+from anomalybench._io import load_csv as _read_csv
+
 
 class MultiColumnLabelEncoder:
     def __init__(self, columns=None):
@@ -80,7 +82,7 @@ def load_wisconsin_breast_cancer():
         "NormalNuclei",
         "Mitoses",
     ]
-    df = pd.read_csv(
+    df = _read_csv(
         os.path.join(
             os.sep.join(os.path.realpath(__file__).split(os.sep)[:-1]),
             "breast-cancer-wisconsin.data",
@@ -107,7 +109,7 @@ def load_lympho():
     small classes are merged and considered as outliers compared to other two
     large classes.
     """
-    df = pd.read_csv(
+    df = _read_csv(
         os.path.join(
             os.sep.join(os.path.realpath(__file__).split(os.sep)[:-1]),
             "lymphography.dat",
@@ -132,7 +134,7 @@ def load_cardio():
     176 points.
     The suspect class is discarded.
     """
-    df = pd.read_csv(
+    df = _read_csv(
         os.path.join(
             os.sep.join(os.path.realpath(__file__).split(os.sep)[:-1]), "ctg.csv"
         )
@@ -157,7 +159,7 @@ def load_arrhythmia():
     the outliers class and
     the rest of the classes are combined to form the inliers class.
     """
-    df = pd.read_csv(
+    df = _read_csv(
         os.path.join(
             os.sep.join(os.path.realpath(__file__).split(os.sep)[:-1]),
             "arrhythmia.data",
@@ -236,7 +238,7 @@ def load_fashion_mnist_sample():
         os.sep.join(os.path.realpath(__file__).split(os.sep)[:-1]),
         "fashion_mnist_sample.csv",
     )
-    df = pd.read_csv(path)
+    df = _read_csv(path)
     features = [column for column in df.columns if column != "Class"]
     return df, features, "Class", "fashionMNISTSample"
 
@@ -284,7 +286,7 @@ def load_karate_club_graph():
 def load_thyroid():
     """Load a compact slice of the Thyroid benchmark dataset."""
 
-    df = pd.read_csv(
+    df = _read_csv(
         os.path.join(
             os.sep.join(os.path.realpath(__file__).split(os.sep)[:-1]),
             "thyroid.csv",
@@ -301,7 +303,7 @@ def load_nab_art_daily_small_noise():
         os.sep.join(os.path.realpath(__file__).split(os.sep)[:-1]),
         "nab_art_daily_small_noise.csv",
     )
-    df = pd.read_csv(path, parse_dates=["timestamp"])
+    df = _read_csv(path, parse_dates=["timestamp"])
     # Encode cyclical hour-of-day signals to provide useful temporal features.
     hours = df["timestamp"].dt.hour.astype(float)
     df["hour_sin"] = np.sin(2 * np.pi * hours / 24.0)
@@ -317,7 +319,7 @@ def load_nab_machine_temperature():
         os.sep.join(os.path.realpath(__file__).split(os.sep)[:-1]),
         "nab_machine_temperature.csv",
     )
-    df = pd.read_csv(path, parse_dates=["timestamp"])
+    df = _read_csv(path, parse_dates=["timestamp"])
     df["minute_of_day"] = (
         df["timestamp"].dt.hour * 60 + df["timestamp"].dt.minute
     ).astype(float)
@@ -330,7 +332,7 @@ def load_nab_machine_temperature():
 def load_kddcup_sample():
     """Load a lightweight subset of the KDD Cup '99 intrusion dataset."""
 
-    df = pd.read_csv(
+    df = _read_csv(
         os.path.join(
             os.sep.join(os.path.realpath(__file__).split(os.sep)[:-1]),
             "kddcup_sample.csv",
