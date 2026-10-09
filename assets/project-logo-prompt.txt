@@ -1,0 +1,7 @@
+Tool: built-in image generation
+
+Use case: logo-brand.
+Asset type: square README project logo for anomalybench.
+Project purpose: A comprehensive Python library for anomaly detection with 30+ algorithms, benchmarking tools, and extensible plugin architecture
+Design direction: A square field of precise black-and-white optical stripes has one hot-pink lozenge that disrupts the alignment and stands slightly apart. Crisp Op Art print with a tiny acid-green calibration notch, white surrounding margin. A compelling benchmark-and-outlier mark with strong negative space, no magnifier.
+Composition: create one finished square artwork with a strong silhouette, readable at 160 pixels, and comfortable margins. This is the logo itself, not a presentation or product mockup. No text, words, letters, numbers, captions or watermark anywhere in the image. Do not use a generic navy-and-gold metallic badge.
