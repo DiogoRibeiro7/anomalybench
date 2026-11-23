@@ -1,6 +1,9 @@
 """Behavioral tests for the optional ChangePointLab bridge."""
 
 from dataclasses import dataclass
+from typing import Any
+
+from dataexcept import DataValidationError
 
 import numpy as np
 import pytest
@@ -55,7 +58,7 @@ def test_persistent_run_with_no_changepoints() -> None:
 
 @pytest.mark.parametrize("indices", [[0], [4], [2, 2], [3, 2], [1.5]])
 def test_invalid_boundaries(indices: list[float]) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(DataValidationError):
         partition_anomalies_by_changepoints(
             [1.0, 2.0, 3.0, 4.0], CPResult(np.asarray(indices)),
             threshold=2, score_orientation="higher_is_more_anomalous",
@@ -63,7 +66,7 @@ def test_invalid_boundaries(indices: list[float]) -> None:
 
 
 def test_online_convention_rejected() -> None:
-    with pytest.raises(ValueError, match="right_exclusive"):
+    with pytest.raises(DataValidationError, match="right_exclusive"):
         partition_anomalies_by_changepoints(
             [1, 2, 3], CPResult(np.array([1]), "time_index"),
             threshold=2, score_orientation="higher_is_more_anomalous",
@@ -79,11 +82,11 @@ def test_online_convention_rejected() -> None:
     {"min_persistent_run": 2.5},
 ])
 def test_invalid_policy(kwargs: dict[str, object]) -> None:
-    policy: dict[str, object] = dict(
+    policy: dict[str, Any] = dict(
         threshold=2, score_orientation="higher_is_more_anomalous"
     )
     policy.update(kwargs)
-    with pytest.raises(ValueError):
+    with pytest.raises(DataValidationError):
         partition_anomalies_by_changepoints(
             [1, 2, 3], CPResult(np.array([1])), **policy
         )
