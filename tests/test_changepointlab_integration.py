@@ -3,10 +3,9 @@
 from dataclasses import dataclass
 from typing import Any
 
-from dataexcept import DataValidationError
-
 import numpy as np
 import pytest
+from dataexcept import DataValidationError
 
 from anomalybench.integrations.changepointlab import (
     partition_anomalies_by_changepoints,
