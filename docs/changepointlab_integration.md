@@ -24,7 +24,7 @@ values = np.r_[rng.normal(0, 1, 100), rng.normal(4, 1, 100)]
 observations = values.reshape(-1, 1)
 
 anomaly_detector = IsolationForestDetector().fit(
-    observations, random_state=42, verbose=0
+    observations, random_state=42
 )
 scores = np.asarray(anomaly_detector.score(observations), dtype=float)
 changes = PELT(
