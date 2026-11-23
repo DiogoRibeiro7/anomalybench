@@ -5,9 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
-from dataexcept import DataValidationError
-
 import numpy as np
+from dataexcept import DataValidationError
 from numpy.typing import NDArray
 
 ScoreOrientation = Literal["higher_is_more_anomalous", "lower_is_more_anomalous"]
