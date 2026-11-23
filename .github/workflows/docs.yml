@@ -30,7 +30,7 @@ jobs:
       # --strict turns every warning into a failed build.
       - run: >-
           poetry run pip install mkdocs==1.6.1 mkdocs-material==9.7.7
-          mkdocstrings[python]==1.0.6
+          mkdocstrings[python]==1.0.7
       - name: Build
         run: poetry run mkdocs build --strict
       - uses: actions/upload-pages-artifact@v3
