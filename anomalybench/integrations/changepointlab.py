@@ -5,8 +5,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
-import numpy as np
 from dataexcept import DataValidationError
+
+import numpy as np
 from numpy.typing import NDArray
 
 ScoreOrientation = Literal["higher_is_more_anomalous", "lower_is_more_anomalous"]
@@ -65,20 +66,36 @@ def partition_anomalies_by_changepoints(
     """
     values = np.asarray(scores)
     if values.ndim != 1 or values.size < 2:
-        raise DataValidationError(field="changepointlab_bridge", value="invalid", message="scores must be a 1-D array with at least two observations")
+        raise DataValidationError(
+            field="changepointlab_bridge",
+            value="invalid",
+            message="scores must be a 1-D array with at least two observations",
+        )
     if values.dtype.kind not in "iuf" or not np.all(np.isfinite(values)):
-        raise DataValidationError(field="changepointlab_bridge", value="invalid", message="scores must contain finite numerical values")
+        raise DataValidationError(
+            field="changepointlab_bridge",
+            value="invalid",
+            message="scores must contain finite numerical values",
+        )
     if (
         isinstance(threshold, (bool, np.bool_))
         or not isinstance(threshold, (int, float, np.integer, np.floating))
         or not np.isfinite(threshold)
     ):
-        raise DataValidationError(field="changepointlab_bridge", value="invalid", message="threshold must be finite")
+        raise DataValidationError(
+            field="changepointlab_bridge",
+            value="invalid",
+            message="threshold must be finite",
+        )
     if score_orientation not in (
         "higher_is_more_anomalous",
         "lower_is_more_anomalous",
     ):
-        raise DataValidationError(field="changepointlab_bridge", value="invalid", message="invalid score_orientation")
+        raise DataValidationError(
+            field="changepointlab_bridge",
+            value="invalid",
+            message="invalid score_orientation",
+        )
     for name, value, minimum in (
         ("boundary_radius", boundary_radius, 0),
         ("min_persistent_run", min_persistent_run, 2),
@@ -88,18 +105,34 @@ def partition_anomalies_by_changepoints(
             or not isinstance(value, (int, np.integer))
             or value < minimum
         ):
-            raise DataValidationError(field="changepointlab_bridge", value="invalid", message=f"{name} must be an integer >= {minimum}")
+            raise DataValidationError(
+                field="changepointlab_bridge",
+                value="invalid",
+                message=f"{name} must be an integer >= {minimum}",
+            )
     if changepoints.boundary_convention != "right_exclusive":
-        raise DataValidationError(field="changepointlab_bridge", value="invalid", message="changepoints must use right_exclusive boundaries")
+        raise DataValidationError(
+            field="changepointlab_bridge",
+            value="invalid",
+            message="changepoints must use right_exclusive boundaries",
+        )
     cps = np.asarray(changepoints.indices)
     if cps.ndim != 1 or cps.dtype.kind not in "iu":
-        raise DataValidationError(field="changepointlab_bridge", value="invalid", message="changepoints must be a 1-D integer array")
+        raise DataValidationError(
+            field="changepointlab_bridge",
+            value="invalid",
+            message="changepoints must be a 1-D integer array",
+        )
     if (
         np.any(cps <= 0)
         or np.any(cps >= values.size)
         or np.any(np.diff(cps) <= 0)
     ):
-        raise DataValidationError(field="changepointlab_bridge", value="invalid", message="changepoints must be sorted, unique interior boundaries")
+        raise DataValidationError(
+            field="changepointlab_bridge",
+            value="invalid",
+            message="changepoints must be sorted, unique interior boundaries",
+        )
 
     anomalous = (
         values >= threshold
